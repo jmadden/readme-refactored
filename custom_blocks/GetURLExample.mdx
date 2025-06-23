@@ -1,0 +1,41 @@
+---
+name: GetURLExample
+---
+import React, { useEffect, useState } from 'react';
+
+export function GetURL({ endpoint, columns, header }) {
+  const [rows, setRows] = useState([]);
+  const [currentUrl, setCurrentUrl] = useState('');
+  const [firstPathSegment, setFirstPathSegment] = useState('');
+
+  useEffect(() => {
+    fetch(endpoint)
+      .then(res => res.json())
+      .then(setRows)
+      .catch(console.error);
+  }, [endpoint]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const full = window.location.href;
+      setCurrentUrl(full);
+      setFirstPathSegment(new URL(full).pathname.split('/')[1] || '');
+    }
+  }, []);
+
+  if (!rows.length) return <p>Loading…</p>;
+
+  return (
+    <>
+      <p>Current URL: {currentUrl}</p>
+      <p>First segment: {firstPathSegment}</p>
+      {/* …rest of your table… */}
+    </>
+  );
+}
+
+<GetURL
+  header="User List"
+  endpoint="https://jsonplaceholder.typicode.com/users"
+  columns={['id','name','email','company']}
+/>
